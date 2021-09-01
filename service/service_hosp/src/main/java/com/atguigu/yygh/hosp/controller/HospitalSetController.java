@@ -5,7 +5,6 @@ import com.atguigu.yygh.common.result.Result;
 import com.atguigu.yygh.common.utils.MD5;
 import com.atguigu.yygh.hosp.service.HospitalSetService;
 import com.atguigu.yygh.model.hosp.HospitalSet;
-import com.atguigu.yygh.vo.hosp.HospitalQueryVo;
 import com.atguigu.yygh.vo.hosp.HospitalSetQueryVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -31,6 +30,7 @@ import java.util.Random;
 @Api(tags = "医院设置管理")
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
+@CrossOrigin
 public class HospitalSetController {
 
     //注入service
@@ -130,11 +130,7 @@ public class HospitalSetController {
     @GetMapping("getHospSet/{id}")
     public  Result getHospSet(@PathVariable long id){
 
-        try {
-            int a=1/0;
-        }catch (Exception e){
-            throw  new YyghException("失败了哦这一次",2000);
-        }
+
 
         HospitalSet hospitalSet = hospitalSetService.getById(id);
 
@@ -167,7 +163,7 @@ public class HospitalSetController {
     }
 
     //8 医院设置锁定和解锁
-    @PutMapping("lockHospitalSet/{id}/{status}}")
+    @PutMapping("lockHospitalSet/{id}/{status}")
     public Result lockHospitalSet(@PathVariable Long id,
                                   @PathVariable Integer status){
         //根据id查询医院设置信息
