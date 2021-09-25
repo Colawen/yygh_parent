@@ -15,9 +15,19 @@ public interface HospitalService {
     //上传医院的方法
     void save(Map<String, Object> switchMap);
 
+
     Hospital getByHoscode(String hoscode);
 
+    //查询医院
     Page<Hospital> selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
 
+
+    //更新上线功能
     void updateStatus(String id, Integer status);
+
+
+    //医院详细信息
+    Map<String,Object> getHospById(String id);
+
+    String getHospName(String hoscode);
 }

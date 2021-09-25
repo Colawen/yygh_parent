@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * @author dzwstart
  * @date 2021/9/15 - 15:31
@@ -47,4 +49,15 @@ public class HospitalController {
     }
 
 
+    //医院详情信息
+    @ApiOperation(value = "医院详情信息")
+    @GetMapping("showHospDetail/{id}")
+    public Result showHospDetail(@PathVariable String id ) {
+
+
+       Map<String,Object> map = hospitalService.getHospById(id);
+
+       return  Result.ok(map);
+
+    }
 }
