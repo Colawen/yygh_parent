@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * @author dzwstart
- * @date 2021/9/25 - 17:27
+ * @date 2021/9/25 - 17:27 洒水多
  */
 @RestController
 @RequestMapping("/admin/hosp/schedule")
