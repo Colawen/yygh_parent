@@ -10,6 +10,7 @@
         <module>service-client</module>
         <module>service-gateway</module>
         <module>service-gateway</module>
+		<module>service/service_user</module>
     </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
