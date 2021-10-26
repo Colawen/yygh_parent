@@ -13,4 +13,6 @@ import java.util.Map;
  */
 public interface UserInfoService extends IService<UserInfo> {
     Map<String, Object> Login(LoginVo loginVo);
+
+    UserInfo selectWxInfoOpenid(String openid);
 }
