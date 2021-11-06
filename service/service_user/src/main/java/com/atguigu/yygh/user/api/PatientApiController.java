@@ -20,6 +20,9 @@ public class PatientApiController {
 
     @Autowired
     private PatientService patientService;
+
+
+
     //获取就诊人列表
     @GetMapping("auth/findAll")
     public Result findAll(HttpServletRequest request){
@@ -75,5 +78,11 @@ public class PatientApiController {
     }
 
 
+    //内部调用  根据id获取就诊人信息(用id 而不是userid查询)
+    @GetMapping("inner/get/{id}")
+    public  Patient getPatientOrder(@PathVariable Long id){
+
+        return  patientService.getPatient(id);
+    }
 
 }

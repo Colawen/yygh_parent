@@ -12,6 +12,8 @@
     <artifactId>service-client</artifactId>
     <modules>
         <module>service_cmn_client</module>
+        <module>service_hosp_client</module>
+        <module>service_user_client</module>
     </modules>
 
     <properties>

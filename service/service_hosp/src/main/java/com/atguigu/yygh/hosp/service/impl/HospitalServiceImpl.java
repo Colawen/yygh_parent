@@ -6,6 +6,7 @@ import com.atguigu.yygh.hosp.repository.HospitalRepository;
 import com.atguigu.yygh.hosp.service.HospitalService;
 import com.atguigu.yygh.model.hosp.Hospital;
 import com.atguigu.yygh.vo.hosp.HospitalQueryVo;
+import com.atguigu.yygh.vo.order.SignInfoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -190,6 +191,8 @@ public class HospitalServiceImpl implements HospitalService {
         return result;
 
     }
+
+
 
 
     //获取查询list集合，遍历进行医院等级封装
