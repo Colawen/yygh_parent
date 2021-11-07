@@ -1,6 +1,8 @@
 package com.atguigu.yygh.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.atguigu.common.rabbit.constant.MqConst;
+import com.atguigu.common.rabbit.service.RabbitService;
 import com.atguigu.yygh.common.exception.YyghException;
 import com.atguigu.yygh.common.helper.HttpRequestHelper;
 import com.atguigu.yygh.common.result.ResultCodeEnum;
@@ -12,6 +14,8 @@ import com.atguigu.yygh.order.mapper.OrderInfoMapper;
 import com.atguigu.yygh.order.service.OrderInfoService;
 import com.atguigu.yygh.user.client.PatientFeignClient;
 import com.atguigu.yygh.vo.hosp.ScheduleOrderVo;
+import com.atguigu.yygh.vo.msm.MsmVo;
+import com.atguigu.yygh.vo.order.OrderMqVo;
 import com.atguigu.yygh.vo.order.SignInfoVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.joda.time.DateTime;
@@ -35,6 +39,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Autowired
     private HospitalFeignClient hospitalFeignClient;
+
+    @Autowired
+    private  RabbitService rabbitService;
 
     //生成订单
     @Override
@@ -101,7 +108,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         paramMap.put("timestamp", HttpRequestHelper.getTimestamp());
         String sign = HttpRequestHelper.getSign(paramMap, signInfoVo.getSignKey());
         paramMap.put("sign", sign);
-        JSONObject result = HttpRequestHelper.sendRequest(paramMap, signInfoVo.getApiUrl()+"/order/submitOrder");
+        JSONObject result = HttpRequestHelper.sendRequest(paramMap, "http://localhost:9998/order/submitOrder");
 
         if(result.getInteger("code") == 200) {
             JSONObject jsonObject = result.getJSONObject("data");
@@ -124,6 +131,40 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             //排班剩余预约数
             Integer availableNumber = jsonObject.getInteger("availableNumber");
             //发送mq信息更新号源和短信通知
+
+            //发送mq号源更新
+            OrderMqVo orderMqVo=new OrderMqVo();
+            orderMqVo.setScheduleId(scheduleId);
+
+            orderMqVo.setAvailableNumber(reservedNumber);
+            orderMqVo.setReservedNumber(reservedNumber);
+
+            //短信提示
+            MsmVo msmVo=new MsmVo();
+            msmVo.setPhone(orderInfo.getPatientPhone());
+
+            String reserveDate =
+                    new DateTime(orderInfo.getReserveDate()).toString("yyyy-MM-dd")
+                            + (orderInfo.getReserveTime()==0 ? "上午": "下午");
+            Map<String,Object> param = new HashMap<String,Object>(){{
+                put("title", orderInfo.getHosname()+"|"+orderInfo.getDepname()+"|"+orderInfo.getTitle());
+                put("amount", orderInfo.getAmount());
+                put("reserveDate", reserveDate);
+                put("name", orderInfo.getPatientName());
+                put("quitTime", new DateTime(orderInfo.getQuitTime()).toString("yyyy-MM-dd HH:mm"));
+            }};
+            msmVo.setParam(param);
+
+            orderMqVo.setMsmVo(msmVo);
+
+            //mq消息发送
+            rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_ORDER, MqConst.ROUTING_ORDER, orderMqVo);
+
+
+
+
+
+
         } else {
             throw new YyghException(result.getString("message"), ResultCodeEnum.FAIL.getCode());
         }

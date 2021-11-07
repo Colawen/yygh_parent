@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @author dzwstart
  * @date 2021/11/6 - 20:04
  *
- * 说明：默认是字符串转换器
+ * 说明：将序列化数据转化为json数据，不使用此配置器mq发送信息给交换器的格式为序列化格式，
  */
 @Configuration
 public class MQConfig {

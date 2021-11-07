@@ -3,3 +3,7 @@ spring:
     name: hospital-manage
   profiles:
     active: dev
+  cloud:
+     nacos:
+        discovery:
+          server-addr: 120.0.0.1:8848

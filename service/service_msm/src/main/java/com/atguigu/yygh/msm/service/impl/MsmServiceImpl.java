@@ -12,6 +12,7 @@ import com.atguigu.yygh.msm.service.MsmService;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.atguigu.yygh.msm.utils.ConstantPropertiesUtils;
+import com.atguigu.yygh.vo.msm.MsmVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -69,4 +70,63 @@ public class MsmServiceImpl implements MsmService {
 
 
     }
+
+    //使用mq发送短信
+    @Override
+    public boolean send(MsmVo msmVo) {
+
+        if(!StringUtils.isEmpty(msmVo.getPhone())){
+            String phone=msmVo.getPhone();
+            boolean send = this.send(phone, msmVo.getParam());
+            return send;
+        }
+
+        return false;
+    }
+
+
+
+    private boolean send(String phone,Map<String,Object> param) {
+
+        //判断手机号是否为空
+        if(StringUtils.isEmpty(phone)){
+            return false;
+        }
+        DefaultProfile profile = DefaultProfile.getProfile(ConstantPropertiesUtils.REGION_ID, ConstantPropertiesUtils.ACCESS_KEY_ID, ConstantPropertiesUtils.SECRET);
+        IAcsClient client = new DefaultAcsClient(profile);
+        CommonRequest request = new CommonRequest();
+        request.setMethod(MethodType.POST);
+        request.setDomain("dysmsapi.aliyuncs.com");
+        request.setVersion("2017-05-25");
+        request.setAction("SendSms");
+        request.putQueryParameter("RegionId", "cn-hangzhou");
+        // 发给谁  ----
+        request.putQueryParameter("PhoneNumbers", phone);
+        // 签名名称
+        request.putQueryParameter("SignName", "薄荷园项目");
+        // 模板名称
+        request.putQueryParameter("TemplateCode", "SMS_171857472");
+        // 验证码 ----
+        //request.putQueryParameter("TemplateParam", "{\"code\":\"" + map.get("code") + "\"}");
+
+
+        request.putQueryParameter("TemplateParam", JSONObject.toJSONString(param));
+        try {
+            CommonResponse response = client.getCommonResponse(request);
+            boolean success = response.getHttpResponse().isSuccess();
+            return success;
+        } catch (ServerException e) {
+            e.printStackTrace();
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+
+
+
+    }
+
+
+
 }

@@ -1,9 +1,8 @@
 package com.atguigu.yygh.hosp.client;
 
-import com.atguigu.yygh.common.result.Result;
 import com.atguigu.yygh.vo.hosp.ScheduleOrderVo;
 import com.atguigu.yygh.vo.order.SignInfoVo;
-import io.swagger.annotations.ApiParam;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;

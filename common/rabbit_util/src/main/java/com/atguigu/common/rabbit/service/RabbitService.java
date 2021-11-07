@@ -13,7 +13,7 @@ public class RabbitService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
     /**
-     *  发送消息
+     *  生产者发送消息到交换机的方法
      * @param exchange 交换机
      * @param routingKey 路由键
      * @param message 消息

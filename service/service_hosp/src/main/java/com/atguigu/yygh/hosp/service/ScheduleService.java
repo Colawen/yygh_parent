@@ -13,7 +13,7 @@ import java.util.Map;
  * @author dzwstart
  * @date 2021/9/14 - 20:41
  */
-public interface ScheduleService  extends IService<Schedule> {
+public interface ScheduleService  {
 
 
     //上传排班
@@ -36,4 +36,8 @@ public interface ScheduleService  extends IService<Schedule> {
     Schedule getScheduleId(String scheduleId);
     //获取排班id获取预约下单数据
     ScheduleOrderVo getScheduleOrderVo(String scheduleId);
+
+    //更新排班数据
+    void update(Schedule schedule);
+
 }
