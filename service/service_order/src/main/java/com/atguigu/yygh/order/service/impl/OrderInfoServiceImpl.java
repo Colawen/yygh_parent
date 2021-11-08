@@ -16,12 +16,17 @@ import com.atguigu.yygh.user.client.PatientFeignClient;
 import com.atguigu.yygh.vo.hosp.ScheduleOrderVo;
 import com.atguigu.yygh.vo.msm.MsmVo;
 import com.atguigu.yygh.vo.order.OrderMqVo;
+import com.atguigu.yygh.vo.order.OrderQueryVo;
 import com.atguigu.yygh.vo.order.SignInfoVo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -173,4 +178,73 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
 
     }
+
+    //根据订单id查询订详情
+    @Override
+    public OrderInfo getOrder(String orderId) {
+        OrderInfo orderInfo =this.packOrderInfo(baseMapper.selectById(orderId)) ;
+
+        return orderInfo;
+    }
+
+
+    //查询订单详情带分页
+    @Override
+    public IPage<OrderInfo> selectPage(Page<OrderInfo> pageParam, OrderQueryVo orderQueryVo) {
+
+        //orderQueryVo获取条件值
+        String name = orderQueryVo.getKeyword(); //医院名称
+        Long patientId = orderQueryVo.getPatientId(); //就诊人名称
+        String orderStatus = orderQueryVo.getOrderStatus(); //订单状态
+        String reserveDate = orderQueryVo.getReserveDate();//安排时间
+        String createTimeBegin = orderQueryVo.getCreateTimeBegin();
+        String createTimeEnd = orderQueryVo.getCreateTimeEnd();
+
+        //创建条件wrapper对象
+        QueryWrapper<OrderInfo> wrapper=new QueryWrapper<>();
+
+        //对条件值进行非空判断
+
+        if(!StringUtils.isEmpty(name)) {
+            wrapper.like("hosname",name);
+        }
+        if(!StringUtils.isEmpty(patientId)) {
+            wrapper.eq("patient_id",patientId);
+        }
+        if(!StringUtils.isEmpty(orderStatus)) {
+            wrapper.eq("order_status",orderStatus);
+        }
+        if(!StringUtils.isEmpty(reserveDate)) {
+            wrapper.ge("reserve_date",reserveDate);
+        }
+        if(!StringUtils.isEmpty(createTimeBegin)) {
+            wrapper.ge("create_time",createTimeBegin);
+        }
+        if(!StringUtils.isEmpty(createTimeEnd)) {
+            wrapper.le("create_time",createTimeEnd);
+        }
+
+
+        //调用mapper方法
+        IPage<OrderInfo> page=baseMapper.selectPage(pageParam,wrapper);
+
+
+        //编号变成对应值封装 数字转换成对于订单状态
+
+        page.getRecords().stream().forEach(item->{
+            this.packOrderInfo(item);
+        });
+
+        return page;
+    }
+
+    //处理订单状态码  数字转换成对于订单状态
+    private OrderInfo packOrderInfo(OrderInfo orderInfo){
+        orderInfo.getParam().put("orderStatusString",OrderStatusEnum.getStatusNameByStatus(orderInfo.getOrderStatus()));
+
+        return  orderInfo;
+
+    }
+
+
 }

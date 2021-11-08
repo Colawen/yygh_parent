@@ -71,16 +71,13 @@ public class MsmServiceImpl implements MsmService {
 
     }
 
-    //使用mq发送短信
+    //mq发送短信封装
     @Override
     public boolean send(MsmVo msmVo) {
-
-        if(!StringUtils.isEmpty(msmVo.getPhone())){
-            String phone=msmVo.getPhone();
-            boolean send = this.send(phone, msmVo.getParam());
-            return send;
+        if(!StringUtils.isEmpty(msmVo.getPhone())) {
+            boolean isSend = this.send(msmVo.getPhone(), msmVo.getParam());
+            return isSend;
         }
-
         return false;
     }
 
@@ -106,22 +103,22 @@ public class MsmServiceImpl implements MsmService {
         request.putQueryParameter("SignName", "薄荷园项目");
         // 模板名称
         request.putQueryParameter("TemplateCode", "SMS_171857472");
-        // 验证码 ----
-        //request.putQueryParameter("TemplateParam", "{\"code\":\"" + map.get("code") + "\"}");
 
 
         request.putQueryParameter("TemplateParam", JSONObject.toJSONString(param));
+
+
+        //调用方法进行短信发送
         try {
             CommonResponse response = client.getCommonResponse(request);
-            boolean success = response.getHttpResponse().isSuccess();
-            return success;
+            System.out.println(response.getData());
+            return response.getHttpResponse().isSuccess();
         } catch (ServerException e) {
             e.printStackTrace();
         } catch (ClientException e) {
             e.printStackTrace();
         }
         return false;
-
 
 
 
