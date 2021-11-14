@@ -3,6 +3,8 @@ package com.atguigu.common.rabbit.constant;
 /**
  * @author dzwstart
  * @date 2021/11/7 - 12:36
+ *
+ * 交换机和队列工具类
  */
 public class MqConst {
     /**
@@ -20,5 +22,18 @@ public class MqConst {
     public static final String ROUTING_MSM_ITEM = "msm.item";
     //队列
     public static final String QUEUE_MSM_ITEM  = "queue.msm.item";
+
+
+    /**
+     * 定时任务
+     */
+
+    public static final String EXCHANGE_DIRECT_TASK = "exchange.direct.task";
+    public static final String ROUTING_TASK_8 = "task.8";
+    //队列
+    public static final String QUEUE_TASK_8 = "queue.task.8";
+
+
+
 
 }

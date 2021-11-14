@@ -115,4 +115,17 @@ public class PaymentInfoServiceImpl extends ServiceImpl<PaymentInfoMapper, Payme
     }
 
 
+    //根据订单id和支付类型获取支付记录
+    @Override
+    public PaymentInfo getPaymentInfo(Long orderId, Integer paymentType) {
+        QueryWrapper<PaymentInfo> wrapper=new QueryWrapper<>();
+        wrapper.eq("order_id",orderId);
+        wrapper.eq("payment_type",paymentType);
+
+        PaymentInfo paymentInfo = baseMapper.selectOne(wrapper);
+        return paymentInfo;
+
+    }
+
+
 }
